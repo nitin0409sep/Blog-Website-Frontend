@@ -127,6 +127,7 @@ const CreateUser = () => {
                 user_name: formData.name,
                 email: formData.email,
                 password: formData.password,
+                created_by: 1,
               };
 
               const { data } = await registerUser(requestBody);
