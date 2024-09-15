@@ -6,6 +6,8 @@ import { Spinner } from "../common/Loader";
 import { useNavigate } from "react-router-dom";
 import { setUserData } from "../utils/customhooks/useLocalstorage";
 import { registerUser } from "../utils/Services/Auth.service";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const Register = () => {
   // Form State
@@ -22,6 +24,9 @@ const Register = () => {
   const { setUser, setShowToast, setToastMessage, setToastError } =
     useUserContext();
   const [loading, setLoading] = useState(false);
+  const [visibility, setVisibility] = useState(false);
+  const [confirmPasswordVisibility, setConfirmPasswordVisibility] =
+    useState(false);
   const navigate = useNavigate();
 
   //? If user has changed password, after filling password & confirm passowrd both, then validate both again
@@ -131,7 +136,7 @@ const Register = () => {
             try {
               setLoading(true);
 
-              const data = await registerUser(requestBody);
+              const { data } = await registerUser(requestBody);
               setUserData(data.token);
               setUser(true);
 
@@ -190,12 +195,12 @@ const Register = () => {
               )}
             </div>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 relative">
               <label htmlFor="password" className="text-black pl-2">
                 Password
               </label>
               <input
-                type="password"
+                type={visibility ? "text" : "password"}
                 id="password"
                 name="password"
                 className="p-3 outline-none bg-slate-50 text-black rounded-xl"
@@ -203,6 +208,13 @@ const Register = () => {
                 onChange={handleInputChange}
                 onBlur={() => validate({ password: "" })}
               />
+              <span className="absolute right-2 top-12">
+                {visibility ? (
+                  <VisibilityOffIcon onClick={() => setVisibility(false)} />
+                ) : (
+                  <VisibilityIcon onClick={() => setVisibility(true)} />
+                )}
+              </span>
               {errors.password && (
                 <span className="text-red-600 text-sm pl-2">
                   {errors.password}
@@ -210,12 +222,12 @@ const Register = () => {
               )}
             </div>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 relative">
               <label htmlFor="cofirmPassword" className="text-black pl-2">
                 Confirm Password
               </label>
               <input
-                type="text"
+                type={confirmPasswordVisibility ? "text" : "password"}
                 id="confirmPassword"
                 name="confirmPassword"
                 className="p-3 outline-none bg-slate-50 text-black rounded-xl"
@@ -223,6 +235,19 @@ const Register = () => {
                 onChange={handleInputChange}
                 onBlur={() => validate({ confirmPassword: "" })}
               />
+
+              <span className="absolute right-2 top-12">
+                {confirmPasswordVisibility ? (
+                  <VisibilityOffIcon
+                    onClick={() => setConfirmPasswordVisibility(false)}
+                  />
+                ) : (
+                  <VisibilityIcon
+                    onClick={() => setConfirmPasswordVisibility(true)}
+                  />
+                )}
+              </span>
+
               {errors.confirmPassword && (
                 <span className="text-red-600 text-sm pl-2">
                   {errors.confirmPassword}
@@ -234,9 +259,9 @@ const Register = () => {
               <button
                 className={`${
                   !validForm
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-blue-400 text-white text-2xl"
-                } p-5 rounded-xl  flex justify-center outline-none`}
+                    ? "bg-gray-400 cursor-not-allowed text-gray-300"
+                    : "bg-blue-400 text-white text-3xl"
+                } p-4 rounded-xl  flex justify-center outline-none`}
                 disabled={!validForm}
               >
                 {loading ? <Spinner height={22} width={22} /> : "Register"}

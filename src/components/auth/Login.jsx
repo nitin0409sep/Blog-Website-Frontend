@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { setUserData } from "../utils/customhooks/useLocalstorage";
 import { Spinner } from "../../index";
 import { loginUser } from "../utils/Services/Auth.service";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 const Login = () => {
   const { setUser, setShowToast, setToastMessage, setToastError } =
@@ -12,6 +14,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [visibility, setVisibility] = useState(false);
   const navigate = useNavigate();
 
   // SUBMIT FORM
@@ -20,7 +23,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const data = await loginUser(email, password);
+      const { data } = await loginUser(email, password);
 
       // Save Token in Local Storage
       setUserData(data.tokens.accessToken);
@@ -34,9 +37,7 @@ const Login = () => {
       setLoading(false);
       setShowToast(true);
 
-      console.log(error);
-
-      setToastError(error.message);
+      setToastError(error.response.data.error ?? error.message);
     }
   };
 
@@ -65,25 +66,36 @@ const Login = () => {
               />
             </div>
 
-            <div className="flex flex-col gap-1 w-full pr-10 pl-10">
+            <div className="flex flex-col gap-1 w-full pr-10 pl-10 relative">
               <label htmlFor="password" className="text-black pl-2">
                 Password
               </label>
               <input
-                type="password"
+                type={visibility ? "text" : "password"}
                 id="password"
                 name="password"
                 value={password}
                 onChange={(e) => {
                   setPassword(e.target.value);
                 }}
-                className="p-3 outline-none bg-slate-50 text-black rounded-xl"
+                className="p-3 outline-none bg-slate-50 text-black rounded-xl pr-10"
               />
+              <span className="absolute right-12 top-12">
+                {visibility ? (
+                  <VisibilityOffIcon onClick={() => setVisibility(false)} />
+                ) : (
+                  <VisibilityIcon onClick={() => setVisibility(true)} />
+                )}
+              </span>
             </div>
 
             <div className="flex flex-col gap-1 w-full pr-10 pl-10">
               <button
-                className="outline-none text-center flex justify-center p-2 rounded-xl bg-blue-400 hover:text-black text-white text-4xl"
+                className={`${
+                  !email || !password || loading
+                    ? "text-gray-300 cursor-not-allowed"
+                    : "text-white"
+                } outline-none text-center flex justify-center p-3 rounded-xl bg-blue-400 text-3xl`}
                 type="submit"
                 disabled={!email || !password || loading}
                 style={{
