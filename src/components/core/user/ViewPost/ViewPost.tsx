@@ -1,7 +1,7 @@
 import React from "react";
 import "./ViewPost.css";
 import { useQuery } from 'react-query';
-import { fetchUserPosts } from "../../../utils/Services/Posts.service";
+import { fetchUserPosts } from "../../../utils/services/Posts.service";
 import { GlobalLoader } from "../../../common/Loader";
 import Error from "../../../common/Error";
 import { Post } from "../../../utils/interfaces/Post.interface";

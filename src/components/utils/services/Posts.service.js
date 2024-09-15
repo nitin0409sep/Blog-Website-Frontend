@@ -1,6 +1,6 @@
 const apiUrl = import.meta.env.VITE_API_URL;
 import axios from "axios";
-import axiosInstance from "../Interceptor/API";
+import axiosInstance from "../interceptor/API";
 
 // Fetch All Public Posts
 export const fetchPublicPosts = async () => {
