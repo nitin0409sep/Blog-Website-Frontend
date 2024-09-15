@@ -14,7 +14,8 @@ import { GlobalLoader, Spinner } from './components/common/Loader';
 // Core Components
 // Admin
 export const CreateUser = lazy(() => import('./components/core/admin/CreateUser'));
-export const ViewUsers = lazy(() => loadCompSlow(import('./components/core/admin/ViewUsers')));
+export const ViewUsers = lazy(() => import('./components/core/admin/ViewUsers'));
+// export const ViewUsers = lazy(() => loadCompSlow(import('./components/core/admin/ViewUsers')));
 
 // User
 export const AddPost = lazy(() => import('./components/core/user/AddPost/AddPost'));

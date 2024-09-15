@@ -4,6 +4,7 @@ import { useUserContext } from "../../../contexts/UserContextProvider";
 import * as EmailValidator from "email-validator";
 import { Spinner } from "../../common/Loader";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "../../utils/Services/Auth.service";
 
 const CreateUser = () => {
   // Form State
@@ -122,15 +123,23 @@ const CreateUser = () => {
             try {
               setLoading(true);
 
-              // const data = await registerUser(requestBody);
-              // setUserData(data.token);
-              // setUser(true);
+              const requestBody = {
+                user_name: formData.name,
+                email: formData.email,
+                password: formData.password,
+              };
+
+              const { data } = await registerUser(requestBody);
 
               setLoading(false);
               setShowToast(true);
               setToastMessage(data.message);
-
-              // navigate("/");
+              setFormData({
+                name: "",
+                email: "",
+                password: "",
+                confirmPassword: "",
+              });
             } catch (error) {
               console.log(error);
               setLoading(false);
@@ -230,9 +239,12 @@ const CreateUser = () => {
                 } p-5 rounded-xl  flex justify-center outline-none`}
                 disabled={!validForm}
               >
-                {loading ? <Spinner height={22} width={22} /> : <p className="text-3xl">Create User</p>}
+                {loading ? (
+                  <Spinner height={22} width={22} />
+                ) : (
+                  <p className="text-3xl">Create User</p>
+                )}
               </button>
-              
             </div>
           </div>
         </Form>
