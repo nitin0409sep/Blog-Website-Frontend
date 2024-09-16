@@ -26,6 +26,16 @@ const Public = () => {
     return <Error />;
   }
 
+  if (!posts?.length) {
+    return (
+      <>
+        <div className="flex justify-center items-center h-full text-6xl text-white select-none">
+          No Post Found
+        </div>
+      </>
+    );
+  }
+
   return (
     <div className="outer-container">
       <div className="gridcontainer">

@@ -1,10 +1,11 @@
 import React from "react";
 import "./ViewPost.css";
 import { useQuery } from 'react-query';
-import { fetchUserPosts } from "../../../utils/services/Posts.service";
+import { fetchUserPosts } from "../../../utils/Services/Posts.service";
 import { GlobalLoader } from "../../../common/Loader";
 import Error from "../../../common/Error";
 import { Post } from "../../../utils/interfaces/Post.interface";
+import NoPostsMessage from "../../../common/NoPostsMessage";
 
 const ViewPost = () => {
   const { data: posts, isLoading, isError, error } = useQuery("user-post", fetchUserPosts, {
@@ -22,6 +23,11 @@ const ViewPost = () => {
     return <Error />;
   }
 
+  if (!posts?.length) {
+    return <NoPostsMessage />
+
+  }
+
 
   return (
     <div className="outer-container">
@@ -34,6 +40,7 @@ const ViewPost = () => {
               <div className="innergriditem innergriditem1">
                 <img
                   src={post.img_url}
+                  loading="lazy"
                   alt="Post image"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
