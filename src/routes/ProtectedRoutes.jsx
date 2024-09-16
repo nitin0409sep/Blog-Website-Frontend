@@ -16,7 +16,6 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
 
   if (shouldRedirect) {
     if (!allowedRoles.includes(role)) {
-      console.log("ASASASAS");
       return <Navigate to="/public" replace />;
     }
   }
