@@ -1,10 +1,13 @@
 import { useQuery } from "react-query";
-import { fetchPublicPosts } from "../Services/Posts.service";
 import { GlobalLoader } from "../../common/Loader";
 import Error from "../../common/Error";
 import "./Public.css";
+import { useNavigate } from "react-router-dom";
+import { fetchPublicPosts } from "../Services/Posts.service";
 
 const Public = () => {
+  const navigate = useNavigate();
+
   // isFetching, isSuccess
   const {
     data: posts,
@@ -35,6 +38,10 @@ const Public = () => {
       </>
     );
   }
+
+  const handleClick = (id) => {
+    navigate(`/public/post/${id}`);
+  };
 
   return (
     <div className="outer-container">
@@ -73,6 +80,7 @@ const Public = () => {
                 className="innergriditem4 bg-blue-400 text-white font-medium font-serif cursor-pointer
                      hover:transform hover:transition-all hover:duration-500 hover:ease-in-out hover:rounded-t-none rounded-br-xl rounded-bl-xl
                     hover:scale-100 justify-center hover:bg-slate-100 hover:text-blue-400"
+                onClick={() => handleClick(post.post_id)}
               >
                 <span>Read Full Article</span>
               </div>

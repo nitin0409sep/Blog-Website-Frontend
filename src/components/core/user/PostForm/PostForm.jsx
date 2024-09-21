@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { Spinner } from "../../../common/Loader";
 import { useDispatch, useSelector } from "react-redux";
 import { addPost, resetAddPost } from "../../../../features/AddPost.slice";
-import { addUserPost } from "../../../utils/Services/Posts.service";
+import { addUserPost } from "../../../utils/services/Posts.service";
 import { useUserContext } from "../../../../contexts/UserContextProvider";
 
 const PostForm = React.memo(({ image }) => {

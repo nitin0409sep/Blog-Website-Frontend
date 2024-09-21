@@ -15,7 +15,7 @@ const NoPostsMessage = () => {
       <button
         className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-4 px-6 rounded text-xl"
         onClick={() => {
-          navigate("/addPost");
+          navigate("/user/add-post");
         }}
       >
         Add New Post

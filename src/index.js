@@ -10,6 +10,8 @@ export const Register = lazy(() => import('./components/auth/Register'));
 import Header from './components/common/Header'
 import Public from './components/utils/public-comp/Public';
 import { GlobalLoader, Spinner } from './components/common/Loader';
+const Post = lazy(() => import('./components/common/Post'));
+
 
 // Core Components
 // Admin
@@ -22,16 +24,16 @@ export const AddPost = lazy(() => import('./components/core/user/AddPost/AddPost
 export const ViewPost = lazy(() => import('./components/core/user/ViewPost/ViewPost'));
 
 
-export { Header, Public, GlobalLoader, Layout, Spinner }
+export { Header, Public, Post, GlobalLoader, Layout, Spinner }
 
 
 // Load a component slow
-const loadCompSlow = (url) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve(url);
-        }, 4000)
-    })
-}
+// const loadCompSlow = (url) => {
+//     return new Promise((resolve, reject) => {
+//         setTimeout(() => {
+//             resolve(url);
+//         }, 4000)
+//     })
+// }
 
 

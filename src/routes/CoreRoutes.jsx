@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Route } from "react-router-dom";
-import { CreateUser, ViewPost, ViewUsers, AddPost } from "../index";
+import { CreateUser, ViewPost, ViewUsers, AddPost, Post } from "../index";
 import { Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoutes";
 import { GlobalLoader } from "../index";
@@ -9,7 +9,7 @@ import Error from "../components/common/Error";
 const CoreRoutes = [
   <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
     <Route
-      path="addPost"
+      path="user/add-post"
       element={
         <Suspense fallback={<GlobalLoader />}>
           <AddPost />
@@ -20,7 +20,18 @@ const CoreRoutes = [
     />
     ,
     <Route
-      path="viewPosts"
+      path="user/update-post/:id"
+      element={
+        <Suspense fallback={<GlobalLoader />}>
+          <AddPost />
+        </Suspense>
+      }
+      errorElement={<Error />}
+      key="viewPosts"
+    />
+    ,
+    <Route
+      path="user/view-posts"
       element={
         <Suspense fallback={<GlobalLoader />}>
           <ViewPost />
@@ -28,11 +39,21 @@ const CoreRoutes = [
       }
       errorElement={<Error />}
       key="viewPosts"
+    />,
+    <Route
+      path="user/post/:id"
+      element={
+        <Suspense fallback={<GlobalLoader />}>
+          <Post />
+        </Suspense>
+      }
+      errorElement={<Error />}
+      key="view-post-id"
     />
   </Route>,
   <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
     <Route
-      path="createUser"
+      path="admin/create-user"
       element={
         <Suspense fallback={<GlobalLoader />}>
           <CreateUser />
@@ -43,7 +64,7 @@ const CoreRoutes = [
     />
     ,
     <Route
-      path="userList"
+      path="admin/user-list"
       element={
         <Suspense fallback={<GlobalLoader />}>
           <ViewUsers />

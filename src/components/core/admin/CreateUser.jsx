@@ -3,7 +3,6 @@ import { Form } from "react-router-dom";
 import { useUserContext } from "../../../contexts/UserContextProvider";
 import * as EmailValidator from "email-validator";
 import { Spinner } from "../../common/Loader";
-import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../utils/Services/Auth.service";
 
 const CreateUser = () => {
@@ -21,7 +20,7 @@ const CreateUser = () => {
   const { setUser, setShowToast, setToastMessage, setToastError } =
     useUserContext();
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+
 
   //? If user has changed password, after filling password & confirm passowrd both, then validate both again
   useEffect(() => {

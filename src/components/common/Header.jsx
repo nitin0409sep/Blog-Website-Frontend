@@ -69,7 +69,7 @@ const Header = () => {
         {/* User */}
         {role === "user" && user && (
           <NavLink
-            to="/addPost"
+            to="/user/add-post"
             style={({ isActive }) => {
               return {
                 color: isActive ? "white" : "",
@@ -86,7 +86,7 @@ const Header = () => {
 
         {role === "user" && user && (
           <NavLink
-            to="/viewPosts"
+            to="/user/view-posts"
             style={({ isActive }) => {
               return {
                 color: isActive ? "white" : "",
@@ -104,7 +104,7 @@ const Header = () => {
         {/* Admin */}
         {user && role === "admin" && (
           <NavLink
-            to="/createUser"
+            to="/admin/create-user"
             style={({ isActive }) => {
               return {
                 color: isActive ? "white" : "",
@@ -120,7 +120,7 @@ const Header = () => {
         )}
         {user && role === "admin" && (
           <NavLink
-            to="/userList"
+            to="/admin/user-list"
             style={({ isActive }) => {
               return {
                 color: isActive ? "white" : "",
