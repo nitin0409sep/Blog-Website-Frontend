@@ -50,7 +50,8 @@ const Post = () => {
                 const target = e.target;
                 target.onerror = null; // Prevent loop if fallback fails
                 target.src = "/no-image.svg";
-                target.style.height = "200px"; // Change height on error
+                target.className =
+                  "w-full h-full flex justify-center items-center object-contain bg-gray-100 p-10";
               }}
             />
           </div>
@@ -173,7 +174,9 @@ const Post = () => {
               onError={(e) => {
                 const target = e.target;
                 target.onerror = null; // Prevent loop if fallback fails
-                target.src = "/no-image.svg";
+                target.src = "/no-photos.png";
+                target.className =
+                  "w-full h-full flex justify-center items-center object-contain bg-gray-100 p-10";
               }}
             />
           </div>
