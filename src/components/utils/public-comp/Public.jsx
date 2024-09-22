@@ -3,7 +3,7 @@ import { GlobalLoader } from "../../common/Loader";
 import Error from "../../common/Error";
 import "./Public.css";
 import { useNavigate } from "react-router-dom";
-import { fetchPublicPosts } from "../Services/Posts.service";
+import { fetchPublicPosts } from "../../utils/services/Posts.service";
 
 const Public = () => {
   const navigate = useNavigate();

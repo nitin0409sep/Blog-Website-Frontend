@@ -34,7 +34,7 @@ const ViewPost = () => {
   }
 
   const handleClick = (id) => {
-    navigate(`/user/post/${id}`);
+    navigate(`/user/view-posts/${id}`);
   };
 
 

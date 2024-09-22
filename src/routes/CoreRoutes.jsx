@@ -30,26 +30,28 @@ const CoreRoutes = [
       key="viewPosts"
     />
     ,
-    <Route
-      path="user/view-posts"
-      element={
-        <Suspense fallback={<GlobalLoader />}>
-          <ViewPost />
-        </Suspense>
-      }
-      errorElement={<Error />}
-      key="viewPosts"
-    />,
-    <Route
-      path="user/post/:id"
-      element={
-        <Suspense fallback={<GlobalLoader />}>
-          <Post />
-        </Suspense>
-      }
-      errorElement={<Error />}
-      key="view-post-id"
-    />
+    <Route path="user/view-posts" key="viewPosts">
+      <Route
+        path=""
+        element={
+          <Suspense fallback={<GlobalLoader />}>
+            <ViewPost />
+          </Suspense>
+        }
+        errorElement={<Error />}
+      ></Route>
+
+      <Route
+        path=":id"
+        element={
+          <Suspense fallback={<GlobalLoader />}>
+            <Post />
+          </Suspense>
+        }
+        errorElement={<Error />}
+        key="view-post-id"
+      />
+    </Route>
   </Route>,
   <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
     <Route
