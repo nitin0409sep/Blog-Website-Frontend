@@ -3,6 +3,7 @@ import { useQuery } from "react-query";
 import { fetchUsers } from "../../utils/services/Admin.service";
 import { GlobalLoader } from "../../common/Loader";
 import Error from "../../common/Error";
+import { CustomizedTables } from "./Table";
 
 const ViewUsers = () => {
   const {
@@ -29,7 +30,11 @@ const ViewUsers = () => {
     return <Error />;
   }
 
-  return <div>ViewUsers</div>;
+  return (
+    <>
+      <CustomizedTables users={users} />
+    </>
+  );
 };
 
 export default ViewUsers;

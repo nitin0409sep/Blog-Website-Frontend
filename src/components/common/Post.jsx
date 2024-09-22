@@ -1,14 +1,23 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { fetchPostData } from "../utils/services/Posts.service";
+import {
+  fetchPostData,
+  fetchUserPostById,
+} from "../utils/services/Posts.service";
 import { GlobalLoader } from "./Loader";
 import Error from "./Error";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { useForm } from "react-hook-form";
 import { Spinner } from "./Loader";
+import { useLocation } from "react-router-dom";
+import { useUserContext } from "../../contexts/UserContextProvider";
 
 const Post = () => {
+  const location = useLocation();
+  const urlRoute = location.pathname.split("/")[1];
+
+  const { user } = useUserContext();
   const { id } = useParams();
   const { register, formState, getValues, handleSubmit } = useForm();
   const { errors, isSubmitting, isValid } = formState;
@@ -18,14 +27,24 @@ const Post = () => {
     isLoading,
     isError,
     isFetching,
-  } = useQuery("article-data", () => fetchPostData(id), {
-    select: (data) => {
-      return data.data.post;
-    },
-  });
+  } = useQuery(
+    "article-data",
+    () => (urlRoute ? fetchPostData(id) : fetchUserPostById(id)),
+    {
+      select: (data) => {
+        return data.data.post;
+      },
+    }
+  );
 
   function addComment() {
     console.log(getValues());
+  }
+
+  function checkUser() {
+    if (!user) {
+      alert("Please login to add your comment!");
+    }
   }
 
   if (isFetching || isLoading) {
@@ -71,7 +90,7 @@ const Post = () => {
               Written By - {post.user_name}
             </span>
 
-            <div className="hover: text-green-400 flex justify-center items-center gap-1 hover:text-blue-400">
+            <div className="hover: text-green-400 flex justify-center items-center gap-1 hover:text-blue-400 ">
               <ThumbUpIcon fontSize="large" />{" "}
               <span className="text-4xl">Like - {post.likes ?? 0}</span>
             </div>
@@ -94,6 +113,7 @@ const Post = () => {
               type="text"
               placeholder="Please add your valuable comments..."
               className="w-full p-4 rounded-xl border-none text-2xl outline-none"
+              readOnly={!user}
               {...register("comment", {
                 required: {
                   value: true,
@@ -108,7 +128,7 @@ const Post = () => {
               <button
                 type="submit"
                 className={`p-4 pl-10 pr-10 rounded-lg text-2xl flex justify-center ${
-                  !isValid
+                  !isValid || !user
                     ? "bg-gray-500 text-white cursor-not-allowed"
                     : "bg-green-400 text-white hover:scale-100 transform transition-all duration-300 ease-in-out"
                 }`}
@@ -157,7 +177,7 @@ const Post = () => {
             <hr className="border-gray-700" />
 
             {/* Article */}
-            <div className="pt-5 pl-5 pb-5 leading-relaxed flex-1 text-pretty hyphens-auto text-justify overflow-auto">
+            <div className="pt-5 pl-5 pb-5 leading-relaxed flex-1 text-pretty hyphens-auto text-justify overflow-auto pr-2">
               <span className="text-white font-serif">
                 {post?.post_article}
               </span>
@@ -183,7 +203,10 @@ const Post = () => {
         </div>
 
         {/* Comments */}
-        <div className="pl-5 pr-5 text-3xl flex flex-col gap-4">
+        <div
+          className="pl-5 pr-5 text-3xl flex flex-col gap-4"
+          onClick={checkUser}
+        >
           <hr className="border-gray-700" />
 
           <span className="text-white">Comments -</span>
@@ -195,6 +218,7 @@ const Post = () => {
               type="text"
               placeholder="Please add your valuable comments..."
               className="w-full p-5 rounded-xl border-none text-xl outline-none"
+              readOnly={!user}
               {...register("comment", {
                 required: {
                   value: true,
@@ -211,7 +235,7 @@ const Post = () => {
               <button
                 type="submit"
                 className={`pt-5 pb-5 pl-32 pr-32 rounded-lg text-2xl flex justify-center ${
-                  !isValid
+                  !isValid || !user
                     ? "bg-gray-500 text-white cursor-not-allowed"
                     : "bg-green-400 text-white hover:scale-105 transform transition-all duration-300 ease-in-out"
                 }`}
