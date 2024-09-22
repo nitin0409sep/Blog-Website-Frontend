@@ -1,14 +1,21 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { fetchPostData } from "../utils/services/Posts.service";
+import {
+  fetchPostData,
+  fetchUserPostById,
+} from "../utils/services/Posts.service";
 import { GlobalLoader } from "./Loader";
 import Error from "./Error";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import { useForm } from "react-hook-form";
 import { Spinner } from "./Loader";
+import { useLocation } from "react-router-dom";
 
 const Post = () => {
+  const location = useLocation();
+  const urlRoute = location.pathname.split("/")[1];
+
   const { id } = useParams();
   const { register, formState, getValues, handleSubmit } = useForm();
   const { errors, isSubmitting, isValid } = formState;
@@ -18,11 +25,15 @@ const Post = () => {
     isLoading,
     isError,
     isFetching,
-  } = useQuery("article-data", () => fetchPostData(id), {
-    select: (data) => {
-      return data.data.post;
-    },
-  });
+  } = useQuery(
+    "article-data",
+    () => (urlRoute ? fetchPostData(id) : fetchUserPostById(id)),
+    {
+      select: (data) => {
+        return data.data.post;
+      },
+    }
+  );
 
   function addComment() {
     console.log(getValues());
@@ -71,7 +82,7 @@ const Post = () => {
               Written By - {post.user_name}
             </span>
 
-            <div className="hover: text-green-400 flex justify-center items-center gap-1 hover:text-blue-400">
+            <div className="hover: text-green-400 flex justify-center items-center gap-1 hover:text-blue-400 cursor-pointer">
               <ThumbUpIcon fontSize="large" />{" "}
               <span className="text-4xl">Like - {post.likes ?? 0}</span>
             </div>

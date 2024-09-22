@@ -12,6 +12,7 @@ export const useUserContext = () => useContext(UserContext);
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(false);
   const [role, setRole] = useState(null);
+  const [refreshPage, setRefreshPage] = useState(false);
 
   // TOAST
   const [showToast, setShowToast] = useState(false);
@@ -55,6 +56,8 @@ export const UserContextProvider = ({ children }) => {
     setToastError,
     toastMessage,
     setToastMessage,
+    refreshPage,
+    setRefreshPage,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
