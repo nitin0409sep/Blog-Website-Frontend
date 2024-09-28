@@ -7,9 +7,9 @@ import { GlobalLoader } from "../index";
 import Error from "../components/common/Error";
 
 const CoreRoutes = [
-  <Route element={<ProtectedRoute allowedRoles={["user"]} />}>
+  <Route path="user" element={<ProtectedRoute allowedRoles={["user"]} />}>
     <Route
-      path="user/add-post"
+      path="add-post"
       element={
         <Suspense fallback={<GlobalLoader />}>
           <AddPost />
@@ -20,17 +20,17 @@ const CoreRoutes = [
     />
     ,
     <Route
-      path="user/update-post/:id"
+      path="update-post/:id"
       element={
         <Suspense fallback={<GlobalLoader />}>
           <AddPost />
         </Suspense>
       }
       errorElement={<Error />}
-      key="viewPosts"
+      key="update-posts"
     />
     ,
-    <Route path="user/view-posts" key="viewPosts">
+    <Route path="view-posts" key="viewPosts">
       <Route
         path=""
         element={
@@ -53,27 +53,28 @@ const CoreRoutes = [
       />
     </Route>
   </Route>,
-  <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+
+  <Route path="admin" element={<ProtectedRoute allowedRoles={["admin"]} />}>
     <Route
-      path="admin/create-user"
+      path="create-user"
       element={
         <Suspense fallback={<GlobalLoader />}>
           <CreateUser />
         </Suspense>
       }
       errorElement={<Error />}
-      key="createUser"
+      key="create-user"
     />
     ,
     <Route
-      path="admin/user-list"
+      path="user-list"
       element={
         <Suspense fallback={<GlobalLoader />}>
           <ViewUsers />
         </Suspense>
       }
       errorElement={<Error />}
-      key="userList"
+      key="user-list"
     />
   </Route>,
   <Route path="/" element={<Navigate to="public" replace />}></Route>,

@@ -4,9 +4,9 @@ import PostForm from "../PostForm/PostForm";
 import { Provider } from "react-redux";
 import { store } from "../../../../store/store";
 import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
-import { fetchPostData } from "../../../utils/services/Posts.service";
-import { Navigate } from "react-router-dom";
+// import { useQuery } from "react-query";
+// import { Navigate } from "react-router-dom";
+// import { fetchPostData } from "../../../utils/services/Posts.service";
 
 const AddPost = () => {
   const { id } = useParams();
@@ -14,18 +14,18 @@ const AddPost = () => {
   const [userPostData, setUserPostData] = useState("");
   const [imageData, setImageData] = useState(null);
 
-  useEffect(() => {
-    if (id) {
-      (async () => {
-        try {
-          const { data } = await fetchPostData(id); // Assuming fetchPostData is an async function
-          setUserPostData(data.post);
-        } catch (error) {
-          console.error("Error fetching post data:", error);
-        }
-      })();
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   if (id) {
+  //     (async () => {
+  //       try {
+  //         const { data } = await fetchPostData(id); // Assuming fetchPostData is an async function
+  //         setUserPostData(data.post);
+  //       } catch (error) {
+  //         console.error("Error fetching post data:", error);
+  //       }
+  //     })();
+  //   }
+  // }, [id]);
 
   useEffect(() => {
     setImageData(userPostData.img_url);

@@ -101,6 +101,23 @@ const Header = () => {
           </NavLink>
         )}
 
+        {role === "user" && user && (
+          <NavLink
+            to="/user/view-profile"
+            style={({ isActive }) => {
+              return {
+                color: isActive ? "white" : "",
+                display: !user ? "none" : "block",
+              };
+            }}
+            className="font-medium 
+            text-blue-400 font-serif cursor-pointer
+                      hover:scale-100 hover:text-white transform transition-all duration-300 ease-in-out hover:rounded-t-none"
+          >
+            Profile
+          </NavLink>
+        )}
+
         {/* Admin */}
         {user && role === "admin" && (
           <NavLink
