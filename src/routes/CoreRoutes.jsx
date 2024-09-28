@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoutes";
 import { GlobalLoader } from "../index";
 import Error from "../components/common/Error";
+import Profile from "../components/core/user/Profile/Profile";
 
 const CoreRoutes = [
   <Route path="user" element={<ProtectedRoute allowedRoles={["user"]} />}>
@@ -18,7 +19,6 @@ const CoreRoutes = [
       errorElement={<Error />}
       key="user"
     />
-    ,
     <Route
       path="update-post/:id"
       element={
@@ -29,7 +29,6 @@ const CoreRoutes = [
       errorElement={<Error />}
       key="update-posts"
     />
-    ,
     <Route path="view-posts" key="viewPosts">
       <Route
         path=""
@@ -52,6 +51,16 @@ const CoreRoutes = [
         key="view-post-id"
       />
     </Route>
+    <Route
+      path="view-profile"
+      key="view-profile"
+      element={
+        <Suspense fallback={<GlobalLoader />}>
+          <Profile />
+        </Suspense>
+      }
+      errorElement={<Error />}
+    />
   </Route>,
 
   <Route path="admin" element={<ProtectedRoute allowedRoles={["admin"]} />}>
