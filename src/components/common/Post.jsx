@@ -23,7 +23,7 @@ const Post = () => {
   const { user, setShowToast, setToastMessage, setToastError } =
     useUserContext();
   const { id } = useParams();
-  const { register, formState, getValues, handleSubmit, watch } = useForm();
+  const { register, formState, getValues, handleSubmit, reset } = useForm();
 
   const { errors, isSubmitting, isValid } = formState;
   const [comments, setComments] = useState([]);
@@ -75,7 +75,7 @@ const Post = () => {
             is_sub_comment: comment.is_sub_comment,
             parent_comment_like_count: comment.commentsLikeCount,
             comment_time: currentTime(comment.commentTiming),
-            user_liked_comment: comment.user_liked_comment,
+            user_liked_comment: comment?.user_liked_comment ?? null,
           },
         ]);
       }
@@ -97,7 +97,7 @@ const Post = () => {
             is_sub_comment: comment.is_sub_comment,
             sub_comment_like_count: comment.commentsLikeCount,
             comment_time: currentTime(comment.commentTiming),
-            user_liked_comment: comment.user_liked_comment,
+            user_liked_comment: comment.user_liked_comment ?? null,
           });
         }
       });
@@ -125,16 +125,14 @@ const Post = () => {
     return hours + (hours > 1 ? " hours" : " hour");
   }
 
-  // Check User Is Logged In Or Not
-  function checkUser() {
-    if (!user) {
-      alert("Please login to add your comment!");
-    }
-  }
-
   // Post Likes
   async function handlePostLike(liked) {
-    if (!user) alert("Please Login To Like a Post!");
+    if (!user) {
+      setShowToast(true);
+      setToastError("Please Login To Like a Post!");
+      return;
+    }
+
     try {
       const res = await likeUnlikePost(!liked, id);
       if (res?.data?.data) {
@@ -151,7 +149,11 @@ const Post = () => {
   // Add Comments on Mobile Screen Function
   async function addComment(e, obj) {
     e.preventDefault();
-    if (!user) alert("Please Login To Like a Post!");
+    if (!user) {
+      setShowToast(true);
+      setToastError("Please Login To Comment on a Post!");
+      return;
+    }
 
     if (commentVal || subCommentVal) {
       try {
@@ -163,9 +165,9 @@ const Post = () => {
           setShowToast(true);
           setToastMessage(res.data.data);
           setIsSubmittingComment(false);
+          setSubCommentIdx(-1);
           setCommentValue("");
           setSubCommentValue("");
-          setSubCommentIdx(-1);
           refetch();
         } else {
           setShowToast(true);
@@ -180,12 +182,51 @@ const Post = () => {
     }
   }
 
+  // Add Comments on Large Screen Function
+  async function addCommentLargeScreen(obj) {
+    if (!user) {
+      setShowToast(true);
+      setToastError("Please Login To Comment on a Post!");
+      return;
+    }
+
+    try {
+      obj.post_id = id;
+      setIsSubmittingComment(true);
+      const res = await postComments(obj);
+
+      if (res?.data?.data) {
+        setShowToast(true);
+        setToastMessage(res.data.data);
+        setIsSubmittingComment(false);
+        setSubCommentIdx(-1);
+        refetch();
+        reset();
+      } else {
+        setShowToast(true);
+        setToastError("Comment Unsuccessfull, Please try again!");
+        setIsSubmittingComment(false);
+      }
+    } catch (error) {
+      setShowToast(true);
+      setToastError(error.message);
+      setIsSubmittingComment(false);
+    }
+  }
+
   // Comment Like
   async function handleCommentLike(comment_id, liked) {
-    console.log(comment_id, liked);
+    if (!user) {
+      setShowToast(true);
+      setToastError("Please Login To Like Comment on a Post!");
+      return;
+    }
 
-    if (!user) alert("Please Login To Like a Post!");
-    if (!comment_id) return;
+    if (!comment_id) {
+      setShowToast(true);
+      setToastError("Comment Id not found");
+      return;
+    }
 
     try {
       const res = await likeUnlikeComment(comment_id, !liked);
@@ -236,7 +277,9 @@ const Post = () => {
           </div>
 
           {/* Description */}
-          <div className=" p-5 text-3xl ">Desc - {post.post_desc}</div>
+          <div className="p-5 pt-0 text-2xl hyphens-auto text-justify leading-relaxed">
+            Desc - {post.post_desc}
+          </div>
 
           <hr />
           {/* Writer & Likes */}
@@ -264,7 +307,7 @@ const Post = () => {
         </div>
 
         {/* Add Comments Form */}
-        <div className="p-5 text-4xl flex flex-col gap-4" onClick={checkUser}>
+        <div className="p-5 text-4xl flex flex-col gap-4">
           <hr />
           <span className="text-white">Comments -</span>
           <form
@@ -370,7 +413,7 @@ const Post = () => {
                           <form
                             className="w-full flex gap-3"
                             onSubmit={(e) =>
-                              addMobileComment(e, {
+                              addComment(e, {
                                 is_sub_comment: true,
                                 parent_comment_id: val.comment_id,
                                 comment: subCommentVal,
@@ -471,12 +514,14 @@ const Post = () => {
             </div>
 
             {/* Description */}
-            <div className="p-5 text-3xl">Desc - {post.post_desc}</div>
+            <div className="p-5 pt-0 text-3xl hyphens-auto text-justify leading-relaxed">
+              Desc - {post.post_desc}
+            </div>
 
             <hr className="border-gray-700" />
 
             {/* Writer & Likes */}
-            <div className="flex h-24 p-5 justify-between text-3xl">
+            <div className="flex h-24 p-5 justify-between text-3xl items-center">
               <span className="text-purple-400">
                 Written By - {post.user_name}
               </span>
@@ -495,7 +540,10 @@ const Post = () => {
 
             {/* Article */}
             <div className="pt-5 pl-5 pb-5 leading-relaxed flex-1 text-pretty hyphens-auto text-justify overflow-auto pr-2">
-              <span className="text-white font-serif">
+              <span
+                className="text-white font-serif"
+                style={{ "font-size": "1.6rem" }}
+              >
                 {post?.post_article}
               </span>
             </div>
@@ -520,16 +568,19 @@ const Post = () => {
         </div>
 
         {/* Comments */}
-        <div
-          className="pl-5 pr-5 text-3xl flex flex-col gap-4"
-          onClick={checkUser}
-        >
+        <div className="pl-5 pr-5 text-3xl flex flex-col gap-4">
           <hr className="border-gray-700" />
 
           <span className="text-white">Comments -</span>
           <form
             className="w-full flex gap-3"
-            onSubmit={handleSubmit(addComment)}
+            onSubmit={handleSubmit(() =>
+              addCommentLargeScreen({
+                is_sub_comment: false,
+                parent_comment_id: null,
+                comment: getValues("comment"),
+              })
+            )}
           >
             <input
               type="text"
@@ -624,7 +675,7 @@ const Post = () => {
                           <form
                             className="w-full flex gap-3"
                             onSubmit={(e) =>
-                              addMobileComment(e, {
+                              addComment(e, {
                                 is_sub_comment: true,
                                 parent_comment_id: val.comment_id,
                                 comment: subCommentVal,
