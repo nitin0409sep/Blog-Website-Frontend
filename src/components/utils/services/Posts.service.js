@@ -47,3 +47,8 @@ export const likeUnlikePost = (like, post_id) => {
 export const postComments = (reqBody) => {
     return axiosInstance.post(`${apiUrl}/user/post/comment`, reqBody);
 }
+
+// Like Post
+export const likeUnlikeComment = (comment_id, like) => {
+    return axiosInstance.post(`${apiUrl}/user/post/likecomment`, { comment_id, like })
+}

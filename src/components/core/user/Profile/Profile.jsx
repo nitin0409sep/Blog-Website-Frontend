@@ -26,11 +26,21 @@ const Profile = () => {
     },
   });
 
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
   useEffect(() => {
     if (user?.user_name) {
       setValue("name", user.user_name);
       setValue("email", user.user_email);
-      setValue("createdAt", new Date(user.created_at).toLocaleDateString());
+      setValue(
+        "createdAt",
+        new Date(user.created_at).toLocaleDateString("en-US", options)
+      );
     }
   }, [user]);
 

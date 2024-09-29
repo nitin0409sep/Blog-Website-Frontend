@@ -6,6 +6,7 @@ import {
   fetchUserPostById,
   likeUnlikePost,
   postComments,
+  likeUnlikeComment,
 } from "../utils/services/Posts.service";
 import { GlobalLoader } from "./Loader";
 import Error from "./Error";
@@ -74,6 +75,7 @@ const Post = () => {
             is_sub_comment: comment.is_sub_comment,
             parent_comment_like_count: comment.commentsLikeCount,
             comment_time: currentTime(comment.commentTiming),
+            user_liked_comment: comment.user_liked_comment,
           },
         ]);
       }
@@ -95,6 +97,7 @@ const Post = () => {
             is_sub_comment: comment.is_sub_comment,
             sub_comment_like_count: comment.commentsLikeCount,
             comment_time: currentTime(comment.commentTiming),
+            user_liked_comment: comment.user_liked_comment,
           });
         }
       });
@@ -119,7 +122,6 @@ const Post = () => {
       return days + (days > 1 ? " days" : " day");
     }
 
-    console.log(hours);
     return hours + (hours > 1 ? " hours" : " hour");
   }
 
@@ -147,8 +149,9 @@ const Post = () => {
   }
 
   // Add Comments on Mobile Screen Function
-  async function addMobileComment(e, obj) {
+  async function addComment(e, obj) {
     e.preventDefault();
+    if (!user) alert("Please Login To Like a Post!");
 
     if (commentVal || subCommentVal) {
       try {
@@ -177,13 +180,25 @@ const Post = () => {
     }
   }
 
-  // Add Comments
-  function addComment(e) {
-    console.log(getValues());
-  }
-
   // Comment Like
-  function handleCommentLike(comment_id) {}
+  async function handleCommentLike(comment_id, liked) {
+    console.log(comment_id, liked);
+
+    if (!user) alert("Please Login To Like a Post!");
+    if (!comment_id) return;
+
+    try {
+      const res = await likeUnlikeComment(comment_id, !liked);
+      if (res?.data?.data) {
+        setShowToast(true);
+        setToastMessage(res.data.data);
+        refetch();
+      }
+    } catch (error) {
+      setShowToast(true);
+      setToastError(error.message);
+    }
+  }
 
   // Fetching
   if (isFetching || isLoading) {
@@ -255,7 +270,7 @@ const Post = () => {
           <form
             className="w-full flex gap-3"
             onSubmit={(e) =>
-              addMobileComment(e, {
+              addComment(e, {
                 is_sub_comment: false,
                 parent_comment_id: null,
                 comment: commentVal,
@@ -308,7 +323,7 @@ const Post = () => {
                       <>
                         <div className="mb-2">
                           <div className="font-bold text-lg">
-                            User Name - {val.user}
+                            User Name - {val.user} {val.user_liked_comment}
                           </div>
                           <div className="bg-gray-800 p-3 rounded-lg">
                             {val.parent_Comment}
@@ -324,11 +339,16 @@ const Post = () => {
                             <span className="text-lg">{val.comment_time}</span>
                             <button
                               className={`cursor-pointer ${
-                                post.user_like
+                                val?.user_liked_comment
                                   ? "text-blue-400"
                                   : "text-green-400"
                               }`}
-                              onClick={() => handleCommentLike(val.comment_id)}
+                              onClick={() =>
+                                handleCommentLike(
+                                  val.comment_id,
+                                  val?.user_liked_comment
+                                )
+                              }
                             >
                               <ThumbUpIcon />
                             </button>
@@ -410,8 +430,17 @@ const Post = () => {
 
                           {/* Sub Comment Like Button */}
                           <button
-                            className={`cursor-pointer text-blue-400`}
-                            onClick={() => handleCommentLike(val.comment_id)}
+                            className={`cursor-pointer ${
+                              val.user_liked_comment
+                                ? "text-blue-400"
+                                : "text-green-400"
+                            }`}
+                            onClick={() =>
+                              handleCommentLike(
+                                val.comment_id,
+                                val.user_liked_comment
+                              )
+                            }
                           >
                             <ThumbUpIcon />
                           </button>
@@ -564,11 +593,16 @@ const Post = () => {
 
                             <button
                               className={`cursor-pointer ${
-                                post.user_like
+                                val?.user_liked_comment
                                   ? "text-blue-400"
                                   : "text-green-400"
                               }`}
-                              onClick={() => handleCommentLike(val.comment_id)}
+                              onClick={() =>
+                                handleCommentLike(
+                                  val.comment_id,
+                                  val.user_liked_comment
+                                )
+                              }
                             >
                               <ThumbUpIcon />
                             </button>
@@ -649,8 +683,17 @@ const Post = () => {
                           <span>{val.comment_time}</span>
 
                           <button
-                            className={`cursor-pointer text-blue-400`}
-                            onClick={() => handleCommentLike(val.comment_id)}
+                            className={`cursor-pointer ${
+                              val?.user_liked_comment
+                                ? "text-blue-400"
+                                : "text-green-400"
+                            }`}
+                            onClick={() =>
+                              handleCommentLike(
+                                val.comment_id,
+                                val.user_liked_comment
+                              )
+                            }
                           >
                             <ThumbUpIcon />
                           </button>
