@@ -542,7 +542,7 @@ const Post = () => {
             <div className="pt-5 pl-5 pb-5 leading-relaxed flex-1 text-pretty hyphens-auto text-justify overflow-auto pr-2">
               <span
                 className="text-white font-serif"
-                style={{ "font-size": "1.6rem" }}
+                style={{ fontSize: "1.6rem" }}
               >
                 {post?.post_article}
               </span>
@@ -617,7 +617,11 @@ const Post = () => {
           <hr className="border-gray-700" />
 
           {/* Comments */}
-          <div className="text-white p-4 space-y-4">
+          <div
+            className={`text-white p-4 space-y-4 ${
+              comments.length ? "block" : "hidden"
+            }`}
+          >
             {comments.map((comment, index) => (
               <div key={index} className="border-b border-gray-600 pb-4">
                 {comment.map((val, subIndex) => (
