@@ -403,6 +403,7 @@ const Post = () => {
                                   ? setSubCommentIdx(-1)
                                   : setSubCommentIdx(index);
                               }}
+                              disabled={!user}
                             >
                               Reply
                             </button>
@@ -669,6 +670,7 @@ const Post = () => {
                                   ? setSubCommentIdx(-1)
                                   : setSubCommentIdx(index);
                               }}
+                              disabled={!user}
                             >
                               Reply
                             </button>
@@ -767,3 +769,4 @@ const Post = () => {
 };
 
 export default Post;
+
