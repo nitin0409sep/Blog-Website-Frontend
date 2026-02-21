@@ -48,208 +48,101 @@ const Post = () => {
   }
 
   if (isFetching || isLoading) {
-    return <GlobalLoader></GlobalLoader>;
+    return <GlobalLoader />;
   }
 
   if (isError) return <Error />;
 
   return (
-    <>
-      {/* For Small-Medium Devices Upto 1020 px */}
-      <div className="flex flex-col h-full justify-between lg:hidden">
-        <div className="flex flex-col font-light text-white text-3xl font-serif">
-          {/* Image */}
-          <div>
-            <img
-              src={post.img_url}
-              loading="lazy"
-              alt="Post image"
-              style={{ objectFit: "cover", height: "400px" }}
-              onError={(e) => {
-                const target = e.target;
-                target.onerror = null; // Prevent loop if fallback fails
-                target.src = "/no-image.svg";
-                target.className =
-                  "w-full h-full flex justify-center items-center object-contain bg-gray-100 p-10";
-              }}
-            />
-          </div>
+    <div className="py-6 max-w-6xl mx-auto">
+      {/* Article Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl lg:text-4xl font-bold text-white leading-tight mb-3">
+          {post.post_name}
+        </h1>
+        <p className="text-lg text-slate-300 mb-4">{post.post_desc}</p>
 
-          {/* Title */}
-          <div className=" p-5 text-3xl text-pink-400 ">
-            Title - {post.post_name}
-          </div>
-
-          {/* Description */}
-          <div className=" p-5 text-3xl ">Desc - {post.post_desc}</div>
-
-          <hr />
-          {/* Writer & Likes */}
-          <div className="flex h-20 p-5 justify-between text-4xl">
-            <span className="text-purple-400 ">
-              Written By - {post.user_name}
-            </span>
-
-            <div className="hover: text-green-400 flex justify-center items-center gap-1 hover:text-blue-400 ">
-              <ThumbUpIcon fontSize="large" />{" "}
-              <span className="text-4xl">Like - {post.likes ?? 0}</span>
+        <div className="flex flex-wrap items-center gap-4 text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-xs font-bold">
+              {post.user_name?.charAt(0)?.toUpperCase() || "U"}
             </div>
-          </div>
-          <hr />
-
-          {/* Article */}
-          <div className="flex-1 text-pretty hyphens-auto text-justify p-5 leading-relaxed">
-            <span className="text-white font-serif">{post?.post_article}</span>
-          </div>
-        </div>
-
-        {/* Comments */}
-        <div className="p-5 text-4xl flex flex-col  gap-4">
-          <hr />
-
-          <span className="text-white">Comments -</span>
-          <div className="flex gap-3">
-            <input
-              type="text"
-              placeholder="Please add your valuable comments..."
-              className="w-full p-4 rounded-xl border-none text-2xl outline-none"
-              readOnly={!user}
-              {...register("comment", {
-                required: {
-                  value: true,
-                },
-              })}
-            />
-            {errors.comment && (
-              <p className="text-red-400 text-lg pl-2">{errors.desc.message}</p>
-            )}
-
-            <div className="flex align-bottom justify-center rounded-xl text-center">
-              <button
-                type="submit"
-                className={`p-4 pl-10 pr-10 rounded-lg text-2xl flex justify-center ${
-                  !isValid || !user
-                    ? "bg-gray-500 text-white cursor-not-allowed"
-                    : "bg-green-400 text-white hover:scale-100 transform transition-all duration-300 ease-in-out"
-                }`}
-                disabled={!isValid || isSubmitting}
-              >
-                {isSubmitting ? <Spinner height={20} width={20} /> : "Add"}
-              </button>
-            </div>
+            <span className="text-slate-300 font-medium">{post.user_name}</span>
           </div>
 
-          <hr />
+          <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 hover:bg-indigo-500/20 hover:border-indigo-500/30 hover:text-indigo-300 transition-all duration-300">
+            <ThumbUpIcon style={{ fontSize: 16 }} />
+            <span className="text-sm font-medium">{post.likes ?? 0} Likes</span>
+          </button>
         </div>
       </div>
 
-      {/* For Large Devices Above 1020 px */}
-      <div className="hidden lg:flex sm:flex-col h-full justify-between">
-        <div
-          className="grid font-light text-white text-4xl font-serif h-full grid-cols-5 gap-x-5"
-          style={{
-            height: "80vh",
-          }}
-        >
-          {/* Content */}
-          <div className="flex flex-col col-span-3" style={{ height: "80vh" }}>
-            {/* Title */}
-            <div className="p-5 text-4xl text-pink-400">
-              Title - {post.post_name}
-            </div>
-
-            {/* Description */}
-            <div className="p-5 text-3xl">Desc - {post.post_desc}</div>
-
-            <hr className="border-gray-700" />
-
-            {/* Writer & Likes */}
-            <div className="flex h-24 p-5 justify-between text-3xl">
-              <span className="text-purple-400">
-                Written By - {post.user_name}
-              </span>
-
-              <div className="text-green-400 flex justify-center items-center gap-1 hover:text-blue-400 cursor-pointer">
-                <ThumbUpIcon fontSize="large" />
-                <span className="text-3xl">Like - {post.likes ?? 0}</span>
-              </div>
-            </div>
-            <hr className="border-gray-700" />
-
-            {/* Article */}
-            <div className="pt-5 pl-5 pb-5 leading-relaxed flex-1 text-pretty hyphens-auto text-justify overflow-auto pr-2">
-              <span className="text-white font-serif">
+      {/* Image + Article Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-8">
+        {/* Article Content */}
+        <div className="lg:col-span-3 order-2 lg:order-1">
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 lg:p-8">
+            <div className="prose prose-invert max-w-none">
+              <p className="text-base text-slate-200 leading-relaxed whitespace-pre-wrap">
                 {post?.post_article}
-              </span>
+              </p>
             </div>
           </div>
+        </div>
 
-          {/* Image */}
-          <div className="col-span-2 rounded-lg mt-1 mr-2">
+        {/* Image */}
+        <div className="lg:col-span-2 order-1 lg:order-2">
+          <div className="sticky top-24 rounded-2xl overflow-hidden border border-white/10">
             <img
               src={post.img_url}
               loading="lazy"
-              alt="Post image"
-              className="object-cover w-full h-full rounded-lg"
+              alt={post.post_name}
+              className="w-full h-64 lg:h-[400px] object-cover"
               onError={(e) => {
                 const target = e.target;
-                target.onerror = null; // Prevent loop if fallback fails
-                target.src = "/no-photos.png";
-                target.className =
-                  "w-full h-full flex justify-center items-center object-contain bg-gray-100 p-10";
+                target.onerror = null;
+                target.src = "/no-image.svg";
+                target.className = "w-full h-64 lg:h-[400px] object-contain bg-slate-800/50 p-10";
               }}
             />
           </div>
         </div>
-
-        {/* Comments */}
-        <div
-          className="pl-5 pr-5 text-3xl flex flex-col gap-4"
-          onClick={checkUser}
-        >
-          <hr className="border-gray-700" />
-
-          <span className="text-white">Comments -</span>
-          <form
-            className="w-full flex gap-3"
-            onSubmit={handleSubmit(addComment)}
-          >
-            <input
-              type="text"
-              placeholder="Please add your valuable comments..."
-              className="w-full p-5 rounded-xl border-none text-xl outline-none"
-              readOnly={!user}
-              {...register("comment", {
-                required: {
-                  value: true,
-                },
-              })}
-            />
-            {errors.comment && (
-              <p className="text-red-400 text-lg pl-2">
-                {errors.comment.message}
-              </p>
-            )}
-
-            <div className="flex items-center justify-center rounded-xl text-center">
-              <button
-                type="submit"
-                className={`pt-5 pb-5 pl-32 pr-32 rounded-lg text-2xl flex justify-center ${
-                  !isValid || !user
-                    ? "bg-gray-500 text-white cursor-not-allowed"
-                    : "bg-green-400 text-white hover:scale-105 transform transition-all duration-300 ease-in-out"
-                }`}
-                disabled={!isValid || isSubmitting}
-              >
-                {isSubmitting ? <Spinner height={20} width={20} /> : "Add"}
-              </button>
-            </div>
-          </form>
-
-          <hr className="border-gray-700" />
-        </div>
       </div>
-    </>
+
+      {/* Comments Section */}
+      <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6" onClick={checkUser}>
+        <h3 className="text-lg font-semibold text-white mb-4">Comments</h3>
+
+        <form className="flex gap-3" onSubmit={handleSubmit(addComment)}>
+          <input
+            type="text"
+            placeholder={user ? "Share your thoughts..." : "Login to comment..."}
+            className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all"
+            readOnly={!user}
+            {...register("comment", {
+              required: {
+                value: true,
+              },
+            })}
+          />
+          {errors.comment && (
+            <p className="text-rose-400 text-xs pl-2">{errors.comment.message}</p>
+          )}
+
+          <button
+            type="submit"
+            className={`px-6 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+              !isValid || !user
+                ? "bg-white/5 text-slate-500 cursor-not-allowed border border-white/10"
+                : "bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105"
+            }`}
+            disabled={!isValid || isSubmitting}
+          >
+            {isSubmitting ? <Spinner height={20} width={20} /> : "Post"}
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

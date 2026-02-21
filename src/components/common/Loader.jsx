@@ -1,26 +1,26 @@
-// NPM package for Loder
 import { ColorRing } from "react-loader-spinner";
 
-export const GlobalLoader = ({ height = 80, width = 80 }) => {
+export const GlobalLoader = ({ height = 48, width = 48 }) => {
   return (
-    <div className="flex justify-center items-center fixed inset-0 bg-opacity-50 bg-gray-800 z-50">
+    <div className="flex flex-col justify-center items-center fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 gap-3">
       <ColorRing
         visible={true}
         height={height}
         width={width}
-        colors={["#68bbe3", "#68bbe3", "#68bbe3", "#68bbe3", "#68bbe3"]}
+        colors={["#818cf8", "#6366f1", "#8b5cf6", "#a78bfa", "#c4b5fd"]}
       />
+      <span className="text-sm text-slate-400 font-medium">Loading...</span>
     </div>
   );
 };
 
-export const Spinner = ({ height = 40, width = 40 }) => {
+export const Spinner = ({ height = 24, width = 24 }) => {
   return (
     <ColorRing
       visible={true}
       height={height}
       width={width}
-      colors={["#68bbe3", "#68bbe3", "#68bbe3", "#68bbe3", "#68bbe3"]}
+      colors={["#818cf8", "#6366f1", "#8b5cf6", "#a78bfa", "#c4b5fd"]}
     />
   );
 };

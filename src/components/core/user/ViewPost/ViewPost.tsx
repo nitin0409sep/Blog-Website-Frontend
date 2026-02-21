@@ -47,98 +47,89 @@ const ViewPost = () => {
   };
 
   const handleEdit = async (id: string) => {
-    // if (!id)
-    //   return;
     // navigate(`/user/update-post/${id}`);
   }
 
   const handleDelete = async (id: string) => {
-    if (!id)
-      return;
-
+    if (!id) return;
     setShowDialog(true);
-
-    console.log(showDialog);
-
-    // if (!showDialog) {
-    //   try {
-    //     const res = await deletePost(id);
-    //     if (res) {
-    //       setShowToast(true);
-    //       setRefreshPage((prev) => !prev);
-    //       setToastMessage(res?.data?.message || "Post Deleted Successfully");
-    //     }
-    //   } catch (error) {
-    //     setShowToast(true);
-    //     setToastError("Couldn't delete Post, please try again.");
-    //   }
-    // }
   }
-
 
   return (
     <>
-      <div className="outer-container">
-        <div className="gridcontainer">
+      <div className="py-6">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white">My Posts</h1>
+          <p className="text-slate-400 mt-1">Manage and view your published articles</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {posts?.map((post: Post, index: number) => (
-            <div className="griditem" key={post.post_id || index}>
-              <div className="innergrid">
+            <article
+              key={post.post_id || index}
+              className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-500 hover:-translate-y-1"
+            >
+              {/* Image */}
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <img
+                  src={post.img_url}
+                  loading="lazy"
+                  alt={post.post_name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.onerror = null;
+                    target.src = "/no-image.svg";
+                  }}
+                />
 
-                {/* Post Image */}
-                <div className="innergriditem innergriditem1 relative">
-                  <img
-                    src={post.img_url}
-                    loading="lazy"
-                    alt="Post image"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.onerror = null; // Prevent loop if fallback fails
-                      target.src = "/no-image.svg";
-                    }}
-                  />
-
-                  <div className="flex gap-2 absolute top-4 right-4">
-                    <button onClick={() => handleEdit(post.post_id)}>
-                      <Tooltip title="Edit" style={{ fontSize: '12px' }}>
-                        <EditIcon fontSize="large" style={{ color: 'green' }} />
-                      </Tooltip>
-                    </button>
-                    <button onClick={() => handleDelete(post.post_id)}>
-                      <Tooltip title="Delete">
-                        <DeleteIcon fontSize="large" style={{ color: 'red' }} />
-                      </Tooltip>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Post Name */}
-                <div className="innergriditem innergriditem2 text-pink-600 font-bold font-serif">
-                  {post.post_name}
-                </div>
-
-                {/* Post Description */}
-                <div className="innergriditem innergriditem3">
-                  {post.post_desc}
-                </div>
-
-                {/* Read Article Button */}
-                <div
-                  className="innergriditem4 bg-blue-400 text-white font-medium font-serif cursor-pointer
-                     hover:transform hover:transition-all hover:duration-500 hover:ease-in-out hover:rounded-t-none rounded-br-xl rounded-bl-xl
-                    hover:scale-100 justify-center hover:bg-slate-100 hover:text-blue-400"
-                  onClick={() => handleClick(post.post_id)}
-                >
-                  <span>Read Full Article</span>
-
+                {/* Action Buttons */}
+                <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleEdit(post.post_id); }}
+                    className="p-2 rounded-xl bg-slate-900/70 backdrop-blur-sm border border-white/10 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/30 transition-all"
+                  >
+                    <Tooltip title="Edit">
+                      <EditIcon style={{ fontSize: 18 }} />
+                    </Tooltip>
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDelete(post.post_id); }}
+                    className="p-2 rounded-xl bg-slate-900/70 backdrop-blur-sm border border-white/10 text-rose-400 hover:bg-rose-500/20 hover:border-rose-500/30 transition-all"
+                  >
+                    <Tooltip title="Delete">
+                      <DeleteIcon style={{ fontSize: 18 }} />
+                    </Tooltip>
+                  </button>
                 </div>
               </div>
-            </div>
+
+              {/* Content */}
+              <div
+                className="p-5 cursor-pointer"
+                onClick={() => handleClick(post.post_id)}
+              >
+                <h3 className="text-lg font-semibold text-white line-clamp-2 mb-2 group-hover:text-indigo-300 transition-colors">
+                  {post.post_name}
+                </h3>
+
+                <p className="text-sm text-slate-400 line-clamp-3 mb-4 leading-relaxed">
+                  {post.post_desc}
+                </p>
+
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-400 group-hover:text-indigo-300 transition-colors">
+                  Read article
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </span>
+              </div>
+            </article>
           ))}
         </div>
       </div>
 
-      {/* Show Dialog Box */}
-      {showDialog && <AlertDialog title={"Delete Post"} desc={"Are you sure you waana delete it?"} btn1={"Cancel"} btn2={"Delete"} />}
+      {showDialog && <AlertDialog title={"Delete Post"} desc={"Are you sure you want to delete this post?"} btn1={"Cancel"} btn2={"Delete"} />}
     </>
   );
 };

@@ -18,7 +18,7 @@ const AddPost = () => {
     if (id) {
       (async () => {
         try {
-          const { data } = await fetchPostData(id); // Assuming fetchPostData is an async function
+          const { data } = await fetchPostData(id);
           setUserPostData(data.post);
         } catch (error) {
           console.error("Error fetching post data:", error);
@@ -32,24 +32,36 @@ const AddPost = () => {
   }, [userPostData]);
 
   return (
-    <>
-      {/* Common container for both screen sizes */}
-      <Provider store={store}>
-        <div className="grid text-white h-full w-full pl-2 pr-2">
-          {/* For Mobile Screen - Below 700px */}
-          <div className="md:hidden grid grid-cols-1 grid-rows-[20rem_auto]">
-            <UploadImage setImageData={setImageData} />
-            <PostForm image={imageData} userPostData={userPostData} />
-          </div>
+    <Provider store={store}>
+      <div className="py-6">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-white">
+            {id ? "Edit Post" : "Create New Post"}
+          </h1>
+          <p className="text-slate-400 mt-1">
+            {id ? "Update your article details" : "Share your thoughts with the world"}
+          </p>
+        </div>
 
-          {/* For Screens 700px and above */}
-          <div className="hidden md:grid md:grid-cols-[2fr_1.5fr]">
+        {/* Mobile: stacked layout */}
+        <div className="md:hidden grid grid-cols-1 gap-6">
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden h-64">
+            <UploadImage setImageData={setImageData} />
+          </div>
+          <PostForm image={imageData} userPostData={userPostData} />
+        </div>
+
+        {/* Desktop: side by side */}
+        <div className="hidden md:grid md:grid-cols-5 gap-6 min-h-[70vh]">
+          <div className="col-span-3">
             <PostForm image={imageData} />
+          </div>
+          <div className="col-span-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
             <UploadImage setImageData={setImageData} />
           </div>
         </div>
-      </Provider>
-    </>
+      </div>
+    </Provider>
   );
 };
 

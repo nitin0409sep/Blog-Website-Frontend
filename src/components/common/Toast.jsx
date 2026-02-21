@@ -16,7 +16,6 @@ const Toast = () => {
       setShowToast(false);
     }, 2000);
 
-    // Cleanup timeout if the component unmounts or msg changes
     return () => {
       clearTimeout(timer);
       setToastError("");
@@ -28,15 +27,40 @@ const Toast = () => {
     <>
       {(toastMessage || toastError) && (
         <div
-          className={`fixed bottom-10 left-1/2 transform -translate-x-1/2 rounded-md 
-        ${showToast ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"} 
-        ${toastMessage ? "bg-green-400" : "bg-red-400"} 
-        h-14 flex items-center justify-center lg:w-1/4 w-1/2 transition-all
-        duration-500 ease-in-out text-white text-4xl`}
+          className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-50 ${
+            showToast ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+          } transition-all duration-500 ease-out`}
         >
-          <span className="text-2xl md:text-3xl max-w-md whitespace-nowrap overflow-hidden text-ellipsis">
-            {toastMessage || toastError}
-          </span>
+          <div
+            className={`flex items-center gap-3 px-5 py-3 rounded-xl backdrop-blur-xl border shadow-2xl ${
+              toastMessage
+                ? "bg-emerald-500/20 border-emerald-500/30 shadow-emerald-500/10"
+                : "bg-rose-500/20 border-rose-500/30 shadow-rose-500/10"
+            }`}
+          >
+            {/* Icon */}
+            <div
+              className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${
+                toastMessage ? "bg-emerald-500" : "bg-rose-500"
+              }`}
+            >
+              {toastMessage ? (
+                <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                </svg>
+              ) : (
+                <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              )}
+            </div>
+
+            <span className={`text-sm font-medium max-w-xs truncate ${
+              toastMessage ? "text-emerald-200" : "text-rose-200"
+            }`}>
+              {toastMessage || toastError}
+            </span>
+          </div>
         </div>
       )}
     </>

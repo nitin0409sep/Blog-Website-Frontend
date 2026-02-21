@@ -8,7 +8,6 @@ import { fetchPublicPosts } from "../../utils/services/Posts.service";
 const Public = () => {
   const navigate = useNavigate();
 
-  // isFetching, isSuccess
   const {
     data: posts,
     isLoading,
@@ -31,11 +30,15 @@ const Public = () => {
 
   if (!posts?.length) {
     return (
-      <>
-        <div className="flex justify-center items-center h-full text-6xl text-white select-none">
-          No Post Found
+      <div className="flex flex-col justify-center items-center h-[60vh] gap-4">
+        <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center">
+          <svg className="w-8 h-8 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+          </svg>
         </div>
-      </>
+        <h2 className="text-2xl font-semibold text-white">No Posts Yet</h2>
+        <p className="text-slate-400">Check back later for new content.</p>
+      </div>
     );
   }
 
@@ -44,48 +47,52 @@ const Public = () => {
   };
 
   return (
-    <div className="outer-container">
-      <div className="gridcontainer">
+    <div className="py-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white">Explore Posts</h1>
+        <p className="text-slate-400 mt-1">Discover stories and ideas from the community</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {posts.map((post, index) => (
-          <div className="griditem" key={post.post_id || index}>
-            <div className="innergrid">
-              {/* Post Image */}
-              <div className="innergriditem1">
-                <img
-                  src={post.img_url}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                  alt="Post image"
-                  onError={(e) => {
-                    e.target.onerror = null; // Prevent infinite loop in case the fallback image also fails
-                    e.target.src = "/no-image.svg";
-                  }}
-                />
-              </div>
+          <article
+            key={post.post_id || index}
+            className="group relative bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 hover:border-indigo-500/30 hover:shadow-xl hover:shadow-indigo-500/10 transition-all duration-500 hover:-translate-y-1 cursor-pointer"
+            onClick={() => handleClick(post.post_id)}
+          >
+            {/* Image */}
+            <div className="aspect-[16/10] overflow-hidden">
+              <img
+                src={post.img_url}
+                alt={post.post_name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "/no-image.svg";
+                }}
+              />
+            </div>
 
-              {/* Post Name */}
-              <div className="innergriditem2 text-pink-500 bg-slate-200 font-bold font-serif">
+            {/* Content */}
+            <div className="p-5">
+              <h3 className="text-lg font-semibold text-white line-clamp-2 mb-2 group-hover:text-indigo-300 transition-colors">
                 {post.post_name}
-              </div>
-              {/* Description */}
-              <div className="innergriditem3 text-purple-500 bg-slate-200">
-                {post.post_desc}
-              </div>
+              </h3>
 
-              {/* Read Article Button */}
-              <div
-                className="innergriditem4 bg-blue-400 text-white font-medium font-serif cursor-pointer
-                     hover:transform hover:transition-all hover:duration-500 hover:ease-in-out hover:rounded-t-none rounded-br-xl rounded-bl-xl
-                    hover:scale-100 justify-center hover:bg-slate-100 hover:text-blue-400"
-                onClick={() => handleClick(post.post_id)}
-              >
-                <span>Read Full Article</span>
+              <p className="text-sm text-slate-400 line-clamp-3 mb-4 leading-relaxed">
+                {post.post_desc}
+              </p>
+
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-400 group-hover:text-indigo-300 transition-colors">
+                  Read article
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                  </svg>
+                </span>
               </div>
             </div>
-          </div>
+          </article>
         ))}
       </div>
     </div>

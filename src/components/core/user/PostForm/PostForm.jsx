@@ -76,97 +76,81 @@ const PostForm = React.memo(({ image }) => {
 
   const { errors, isSubmitting, isValid } = formState;
 
+  const inputClass =
+    "w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-slate-500 text-sm outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 transition-all";
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit, onError)}
-      className="h-full grid grid-rows-[auto_4rem] gap-2 p-2 pt-0"
+      className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 flex flex-col gap-5 h-full"
     >
-      <div className="h-full w-full grid grid-cols-1 grid-rows-[8rem_8rem_auto] gap-3">
-        <div
-          className={`grid grid-cols-1 ${
-            errors.title
-              ? "grid-rows-[2rem_5rem_2rem]"
-              : "grid-rows-[2.3rem_5rem]"
-          }`}
-        >
-          <label
-            htmlFor="title"
-            className="text-xl font-serif pl-2 text-gray-200"
-          >
-            Title
-          </label>
-          <input
-            type="text"
-            id="title"
-            className="outline-none rounded-xl bg-gray-200 text-black text-4xl pl-2 pr-2"
-            {...register("title", {
-              required: "Title is required",
-            })}
-            onChange={handleChange}
-          />
-          {errors.title && (
-            <p className="text-red-400 text-lg pl-2">{errors.title.message}</p>
-          )}
-        </div>
-
-        <div
-          className={`grid grid-cols-1 ${
-            errors.desc ? "grid-rows-[2rem_5rem_1rem]" : "grid-rows-[3rem_5rem]"
-          } `}
-        >
-          <label
-            htmlFor="desc"
-            className="text-xl font-serif pl-2 pr-2 text-gray-200 hover:text-white"
-          >
-            Description
-          </label>
-          <textarea
-            id="desc"
-            className="outline-none rounded-xl bg-gray-200 text-black text-3xl overflow-auto resize-none pl-2 pr-2 pt-2 text-justify break-words"
-            {...register("desc", {
-              required: "Description is required.",
-              maxLength: {
-                value: 130,
-                message: "Max number of characters is 130.",
-              },
-            })}
-            onChange={handleChange}
-            maxLength={130}
-          ></textarea>
-          {errors.desc && (
-            <p className="text-red-400 text-lg pl-2">{errors.desc.message}</p>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 grid-rows-[1.3rem_auto] gap-3">
-          <label
-            htmlFor="article"
-            className="text-xl font-serif pl-2 pr-2 text-gray-200 "
-          >
-            Article
-          </label>
-          <textarea
-            id="article"
-            className="outline-none rounded-xl bg-gray-200 text-black text-3xl overflow-auto resize-none p-4 text-justify break-words"
-            {...register("article")}
-            onChange={handleChange}
-          ></textarea>
-        </div>
+      <div className="space-y-1.5">
+        <label htmlFor="title" className="block text-sm font-medium text-slate-300">
+          Title
+        </label>
+        <input
+          type="text"
+          id="title"
+          placeholder="Give your post a title"
+          className={inputClass}
+          {...register("title", {
+            required: "Title is required",
+          })}
+          onChange={handleChange}
+        />
+        {errors.title && (
+          <p className="text-rose-400 text-xs">{errors.title.message}</p>
+        )}
       </div>
 
-      <div className="self-end flex justify-center rounded-xl text-center">
-        <button
-          type="submit"
-          className={`p-4 rounded-lg text-2xl flex justify-center w-full ${
-            !isValid || !image || isSubmitting
-              ? "bg-gray-500 text-white cursor-not-allowed"
-              : "bg-green-400 text-white hover:scale-100 transform transition-all duration-300 ease-in-out"
-          }`}
-          disabled={!isValid || isSubmitting || !image}
-        >
-          {isSubmitting ? <Spinner height={20} width={20} /> : "Submit"}
-        </button>
+      <div className="space-y-1.5">
+        <label htmlFor="desc" className="block text-sm font-medium text-slate-300">
+          Description
+        </label>
+        <textarea
+          id="desc"
+          rows={2}
+          placeholder="A brief summary of your post (max 130 chars)"
+          className={`${inputClass} resize-none`}
+          {...register("desc", {
+            required: "Description is required.",
+            maxLength: {
+              value: 130,
+              message: "Max number of characters is 130.",
+            },
+          })}
+          onChange={handleChange}
+          maxLength={130}
+        />
+        {errors.desc && (
+          <p className="text-rose-400 text-xs">{errors.desc.message}</p>
+        )}
       </div>
+
+      <div className="space-y-1.5 flex-1 flex flex-col">
+        <label htmlFor="article" className="block text-sm font-medium text-slate-300">
+          Article
+        </label>
+        <textarea
+          id="article"
+          placeholder="Write your article content here..."
+          className={`${inputClass} resize-none flex-1 min-h-[200px]`}
+          {...register("article")}
+          onChange={handleChange}
+        />
+      </div>
+
+      <button
+        type="submit"
+        className={`w-full py-3 rounded-xl text-sm font-medium transition-all duration-300 flex items-center justify-center ${
+          !isValid || !image || isSubmitting
+            ? "bg-white/5 text-slate-500 cursor-not-allowed border border-white/10"
+            : "bg-gradient-to-r from-indigo-500 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02]"
+        }`}
+        disabled={!isValid || isSubmitting || !image}
+      >
+        {isSubmitting ? <Spinner height={20} width={20} /> : "Publish Post"}
+      </button>
     </form>
   );
 });

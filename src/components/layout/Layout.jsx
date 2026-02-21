@@ -14,17 +14,15 @@ const Layout = () => {
   }, [showToast]);
 
   return (
-    <>
+    <div className="min-h-screen">
       <Header />
-      <>
-        <div className="relative pt-20 h-full w-full">
-          <QueryClientProvider client={queryClient}>
-            <Outlet />
-          </QueryClientProvider>
-        </div>
-      </>
+      <main className="pt-20 pb-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen">
+        <QueryClientProvider client={queryClient}>
+          <Outlet />
+        </QueryClientProvider>
+      </main>
       {showToast && <Toast />}
-    </>
+    </div>
   );
 };
 

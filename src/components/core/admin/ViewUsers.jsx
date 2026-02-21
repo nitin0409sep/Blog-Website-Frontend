@@ -30,11 +30,7 @@ const ViewUsers = () => {
     return <Error />;
   }
 
-  return (
-    <>
-      <CustomizedTables users={users} />
-    </>
-  );
+  return <CustomizedTables users={users} />;
 };
 
 export default ViewUsers;
