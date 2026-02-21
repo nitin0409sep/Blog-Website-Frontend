@@ -4,9 +4,9 @@ import PostForm from "../PostForm/PostForm";
 import { Provider } from "react-redux";
 import { store } from "../../../../store/store";
 import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
-import { fetchPostData } from "../../../utils/services/Posts.service";
-import { Navigate } from "react-router-dom";
+// import { useQuery } from "react-query";
+// import { Navigate } from "react-router-dom";
+// import { fetchPostData } from "../../../utils/services/Posts.service";
 
 const AddPost = () => {
   const { id } = useParams();

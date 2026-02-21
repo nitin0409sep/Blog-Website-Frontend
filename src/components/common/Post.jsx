@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import {
-  fetchPostData,
+  fetchPublicPostById,
   fetchUserPostById,
+  likeUnlikePost,
+  postComments,
+  likeUnlikeComment,
 } from "../utils/services/Posts.service";
 import { GlobalLoader } from "./Loader";
 import Error from "./Error";
@@ -17,40 +20,233 @@ const Post = () => {
   const location = useLocation();
   const urlRoute = location.pathname.split("/")[1];
 
-  const { user } = useUserContext();
+  const { user, setShowToast, setToastMessage, setToastError } =
+    useUserContext();
   const { id } = useParams();
-  const { register, formState, getValues, handleSubmit } = useForm();
+  const { register, formState, getValues, handleSubmit, reset } = useForm();
+
   const { errors, isSubmitting, isValid } = formState;
+  const [comments, setComments] = useState([]);
+  const [commentVal, setCommentValue] = useState("");
+  const [subCommentVal, setSubCommentValue] = useState("");
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [subCommentIdx, setSubCommentIdx] = useState(-1);
 
   const {
     data: post,
     isLoading,
     isError,
     isFetching,
+    refetch,
   } = useQuery(
     "article-data",
-    () => (urlRoute ? fetchPostData(id) : fetchUserPostById(id)),
+    () =>
+      urlRoute === "user"
+        ? fetchUserPostById(id)
+        : fetchPublicPostById(id, user),
     {
       select: (data) => {
-        return data.data.post;
+        return data.data.posts;
       },
     }
   );
 
-  function addComment() {
-    console.log(getValues());
+  // used useEffect To Set Comment Values
+  useEffect(() => {
+    if (post?.comments) {
+      const commentValues = setCommentsValue(post.comments);
+      setComments(commentValues);
+    }
+  }, [post]);
+
+  // Comments
+  function setCommentsValue(obj) {
+    if (!obj) return;
+
+    const map = new Map();
+
+    obj.forEach((comment) => {
+      if (comment.is_sub_comment == false && comment.parentCommentId == null) {
+        map.set(comment.comment_id, [
+          {
+            comment_id: comment.comment_id,
+            user: comment.user,
+            parent_Comment: comment.comment,
+            is_sub_comment: comment.is_sub_comment,
+            parent_comment_like_count: comment.commentsLikeCount,
+            comment_time: currentTime(comment.commentTiming),
+            user_liked_comment: comment?.user_liked_comment ?? null,
+          },
+        ]);
+      }
+    });
+
+    mapSubComments();
+
+    function mapSubComments() {
+      obj.forEach((comment) => {
+        if (
+          map.has(comment.parentCommentId) &&
+          comment.parentCommentId != null &&
+          comment.is_sub_comment === true
+        ) {
+          map.get(comment.parentCommentId).push({
+            comment_id: comment.comment_id,
+            user: comment.user,
+            sub_comment: comment.comment,
+            is_sub_comment: comment.is_sub_comment,
+            sub_comment_like_count: comment.commentsLikeCount,
+            comment_time: currentTime(comment.commentTiming),
+            user_liked_comment: comment.user_liked_comment ?? null,
+          });
+        }
+      });
+    }
+
+    const commentsArray = [];
+    for (let [_, value] of map) {
+      commentsArray.push(value);
+    }
+
+    return commentsArray;
   }
 
-  function checkUser() {
+  // Current Time Difference Function
+  function currentTime(commentTiming) {
+    const hours = Math.floor(
+      (Date.now() - new Date(commentTiming).getTime()) / (1000 * 60 * 60)
+    );
+
+    if (hours >= 24) {
+      const days = Math.floor(hours / 24);
+      return days + (days > 1 ? " days" : " day");
+    }
+
+    return hours + (hours > 1 ? " hours" : " hour");
+  }
+
+  // Post Likes
+  async function handlePostLike(liked) {
     if (!user) {
-      alert("Please login to add your comment!");
+      setShowToast(true);
+      setToastError("Please Login To Like a Post!");
+      return;
+    }
+
+    try {
+      const res = await likeUnlikePost(!liked, id);
+      if (res?.data?.data) {
+        setShowToast(true);
+        setToastMessage(res.data.data);
+        refetch();
+      }
+    } catch (error) {
+      setShowToast(true);
+      setToastError(error.message);
     }
   }
 
+  // Add Comments on Mobile Screen Function
+  async function addComment(e, obj) {
+    e.preventDefault();
+    if (!user) {
+      setShowToast(true);
+      setToastError("Please Login To Comment on a Post!");
+      return;
+    }
+
+    if (commentVal || subCommentVal) {
+      try {
+        obj.post_id = id;
+        setIsSubmittingComment(true);
+        const res = await postComments(obj);
+
+        if (res?.data?.data) {
+          setShowToast(true);
+          setToastMessage(res.data.data);
+          setIsSubmittingComment(false);
+          setSubCommentIdx(-1);
+          setCommentValue("");
+          setSubCommentValue("");
+          refetch();
+        } else {
+          setShowToast(true);
+          setToastError("Comment Unsuccessfull, Please try again!");
+          setIsSubmittingComment(false);
+        }
+      } catch (error) {
+        setShowToast(true);
+        setToastError(error.message);
+        setIsSubmittingComment(false);
+      }
+    }
+  }
+
+  // Add Comments on Large Screen Function
+  async function addCommentLargeScreen(obj) {
+    if (!user) {
+      setShowToast(true);
+      setToastError("Please Login To Comment on a Post!");
+      return;
+    }
+
+    try {
+      obj.post_id = id;
+      setIsSubmittingComment(true);
+      const res = await postComments(obj);
+
+      if (res?.data?.data) {
+        setShowToast(true);
+        setToastMessage(res.data.data);
+        setIsSubmittingComment(false);
+        setSubCommentIdx(-1);
+        refetch();
+        reset();
+      } else {
+        setShowToast(true);
+        setToastError("Comment Unsuccessfull, Please try again!");
+        setIsSubmittingComment(false);
+      }
+    } catch (error) {
+      setShowToast(true);
+      setToastError(error.message);
+      setIsSubmittingComment(false);
+    }
+  }
+
+  // Comment Like
+  async function handleCommentLike(comment_id, liked) {
+    if (!user) {
+      setShowToast(true);
+      setToastError("Please Login To Like Comment on a Post!");
+      return;
+    }
+
+    if (!comment_id) {
+      setShowToast(true);
+      setToastError("Comment Id not found");
+      return;
+    }
+
+    try {
+      const res = await likeUnlikeComment(comment_id, !liked);
+      if (res?.data?.data) {
+        setShowToast(true);
+        setToastMessage(res.data.data);
+        refetch();
+      }
+    } catch (error) {
+      setShowToast(true);
+      setToastError(error.message);
+    }
+  }
+
+  // Fetching
   if (isFetching || isLoading) {
     return <GlobalLoader />;
   }
 
+  // Error
   if (isError) return <Error />;
 
   return (
@@ -147,3 +343,4 @@ const Post = () => {
 };
 
 export default Post;
+
